@@ -1,0 +1,31 @@
+<% include ./partials/header.ejs %>
+<div class="col-md-6 mx-auto" style="margin-top: 6rem;">
+    <h1>Đăng ký</h1>
+        <% for (let errorKey in errors)  { %>
+            <div class="alert alert-danger"><%= errors[errorKey].msg %></div>
+        <% } %>
+    <form action="/user/signup" method="post">  
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" name="username" placeholder="Enter name" value= "<%=username %>" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" name="email" placeholder="Enter email" value="<%=email %>" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Password" value="<%=password %>" required>
+        </div>
+        <div class="form-group">
+            <label for="repeatedpassword">Confirm Password</label>
+            <input type="password" class="form-control" name="confirmPassword" placeholder="Nhắc lại password" required>
+        </div>
+            <button type="submit" class="btn btn-primary">Đăng ký</button>
+    </form>
+</div>
+
+
+<% include ./partials/footer.ejs %>
+
+

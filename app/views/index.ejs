@@ -1,0 +1,138 @@
+<% include ./partials/header.ejs %>
+<div class="container-fluid">
+  <div class="row" style="height: 100vh">
+    <div class="col-3 border-right" style="margin-top: 4rem">
+      <h5 class="mt-2 text-center">User đang Online</h5>
+      <ul id="usersOnline" class="ml-2 list-unstyled d-flex flex-column align-items-start">
+      </ul>
+    </div>
+    <div class="col-9 d-flex flex-column">
+    <ul class="list-unstyled d-flex flex-column align-items-start" style="margin-top: 5rem; overflow-y: auto;" id="messages">
+    </ul>
+    <form id="chatform" class="input-group mb-3 mt-auto" action="">
+        <input id="m" type="text" class="form-control" placeholder="Gõ tin nhắn ở đây..."
+        data-toggle="popover" data-placement="top" data-content="Tin nhắn của bạn cần có độ dài 2 đến 100 ký tự.">
+        <div class="input-group-append">
+          <button id="btn-chat" class="btn btn-outline-secondary" style="padding-bottom: 1.8rem" type="submit">Gửi tin nhắn</button>
+        </div>
+    </form>
+  </div>
+    
+  </div>
+</div>
+<script>
+    $(function () {
+    var socket = io();
+
+    $('#chatform').submit(function(){
+      const msg = $('#m').val();
+      if (msg.length <= 2 || msg.length > 100) {
+        $('#chatform').animateCss('shake');
+        $('#m').popover('show');
+      } else {
+        $('#messages').append(`<li class="rounded bg-primary text-white p-2 my-2 d-inline-block ml-auto mw-100">${msg}</li>`);
+        scrollMessagesToBottom();
+        socket.emit('chat message', msg);
+        $('#m').val('');
+      }
+      return false;
+    });
+
+    //user is typing feature
+    let typing = false;
+    let timeout = undefined;
+
+    function timeoutFunction(){
+      typing = false;
+      socket.emit('user is not typing');
+    }
+
+    $('#m').keypress(function(e){
+      //hide validation message
+      $(this).popover('hide');
+      //user is typing feature - continued
+      if (e.which !== 13) {
+        if(typing == false) {
+          typing = true;
+          socket.emit('user is typing');
+          timeout = setTimeout(timeoutFunction, 5000);
+        } else {
+          clearTimeout(timeout);
+          timeout = setTimeout(timeoutFunction, 5000);
+        }
+      }
+      
+    });
+    
+    //handlers
+    socket.on('render chatroom', function(message) {
+      $('#messages').empty();
+      //seperate chats between user and others
+      for (let chat of message.chats) {
+        if (chat.user_id === message.user_id) {
+            $('#messages').append(`<li class="rounded bg-primary text-white p-2 my-2 d-inline-block ml-auto mw-100">${chat.message}</li>`);
+          } else {
+            $('#messages').append(`<li class=" d-inline-block p-2 my-2 mw-100"><span class="border-bottom d-inline-block">${chat.username} </span>: <span class="rounded bg-light p-2">${chat.message}</span></li>`);  
+          }     
+      }
+      scrollMessagesToBottom();      
+    });
+    socket.on('user connected', function(userList){
+      $('#usersOnline').empty();
+      for (let user of userList) {
+        $('#usersOnline').append(`<li class="my-2 border-bottom d-inline-block" style="font-size: 1.8rem">${user}</li>`);
+      } 
+    });
+    socket.on('chat message', function(message){
+      $('#messages').append(`<li class=" d-inline-block p-2 my-2 mw-100"><span class="border-bottom d-inline-block">${message.user} </span>: <span class="rounded bg-light p-2">${message.msg}</span></li>`);
+    });
+    socket.on('user is typing', function(user){
+      console.log(`${user.username} is typing...`);
+      console.log('user id', user.user_id);
+      $('#messages').append(`<li class=" d-inline-block p-2 my-2 mw-100" id="${user.user_id}"><span class="border-bottom d-inline-block">${user.username}</span>: is typing...</li>`);
+      scrollMessagesToBottom(); 
+    });
+    socket.on('user is not typing', function(user_id){
+      $(`#${user_id}`).remove();
+    });
+    socket.on('user disconnected', function*(userList){
+      $('#usersOnline').empty();
+      for (let user of userList) {
+        $('#usersOnline').append(`<li class="my-2 border-bottom d-inline-block" style="font-size: 1.8rem">${user}</li>`);
+      } 
+    });
+  });
+
+  function scrollMessagesToBottom() {
+    const m = $('#messages');
+    m.scrollTop(m.prop("scrollHeight"));
+  }
+
+  //add animate.css
+  $.fn.extend({
+  animateCss: function(animationName, callback) {
+    var animationEnd = (function(el) {
+      var animations = {
+        animation: 'animationend',
+        OAnimation: 'oAnimationEnd',
+        MozAnimation: 'mozAnimationEnd',
+        WebkitAnimation: 'webkitAnimationEnd',
+      };
+
+      for (var t in animations) {
+        if (el.style[t] !== undefined) {
+          return animations[t];
+        }
+      }
+    })(document.createElement('div'));
+
+    this.addClass('animated ' + animationName).one(animationEnd, function() {
+      $(this).removeClass('animated ' + animationName);
+      if (typeof callback === 'function') callback();
+    });
+    return this;
+  },
+});
+</script>
+<% include ./partials/footer-script-only.ejs %>
+
