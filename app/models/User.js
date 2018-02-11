@@ -13,6 +13,8 @@ var UserSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
+	resetPasswordToken: String,
+	resetPasswordExpires: Date
 });
 
 

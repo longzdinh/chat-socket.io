@@ -1,0 +1,18 @@
+<% include ./partials/header.ejs %>
+<div class="col-md-6 mx-auto" style="margin-top: 8rem;">
+    <h1>Reset password</h1>
+    <form method="post" action="">
+            <div class="form-group" >
+              <label for="password">New password</label>
+              <input type="password" class="form-control" name="password" placeholder="Enter password" required>
+            </div>
+            <div class="form-group" >
+                <label for="confirmPassword">Confirm new password</label>
+                <input type="password" class="form-control" name="confirmPassword" placeholder="Enter password again" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update password</button>
+    </form>
+</div>
+    
+
+<% include ./partials/footer.ejs %>

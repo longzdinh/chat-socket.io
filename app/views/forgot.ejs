@@ -1,0 +1,16 @@
+<% include ./partials/header.ejs %>
+<div class="col-md-6 mx-auto" style="margin-top: 8rem;">
+    <h1>Forgot password</h1>
+    <form method="post" action="/user/forgot">
+            <div class="form-group" >
+              <label for="email">Email address</label>
+              <input type="email" class="form-control" name="email" placeholder="Enter email">
+            </div>
+            <button type="submit" class="btn btn-primary">Reset password</button>
+    </form>
+</div>
+    
+
+<% include ./partials/footer.ejs %>
+
+

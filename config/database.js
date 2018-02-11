@@ -1,4 +1,4 @@
 module.exports = {
 
-    'url' : 'mongodb://localhost/chatio' 
+    'url' : 'mongodb://long:long@ds231758.mlab.com:31758/long-chatio' 
 };

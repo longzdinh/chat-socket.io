@@ -22,10 +22,16 @@
                   <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                  <div class="navbar-nav">
+                  
                     <a class="nav-item nav-link" href="/">Home</a>
-                    <a class="nav-item nav-link" href="/user/login">Đăng nhập</a>                    
-                    <a class="nav-item nav-link" href="/user/signup">Đăng ký</a>
+                    <div class="navbar-nav">
+                      <% if (!user) { %>
+                      <a class="nav-item nav-link" href="/user/login">Đăng nhập</a>                    
+                      <a class="nav-item nav-link" href="/user/signup">Đăng ký</a>
+                      <% } %> 
+                      <% if (user) { %>
+                      <a class="nav-item nav-link" href="/user/logout">Log out</a>
+                      <% } %>
                   </div>
                 </div>
         </nav>

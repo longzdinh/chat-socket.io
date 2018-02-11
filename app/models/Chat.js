@@ -12,7 +12,8 @@ const ChatSchema = new Schema({
         default: moment().format('YYYY-MM-DD hh:mm:ss')
     },
     user_id: {
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     username: {
         type: String

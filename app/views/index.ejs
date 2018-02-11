@@ -2,18 +2,18 @@
 <div class="container-fluid">
   <div class="row" style="height: 100vh">
     <div class="col-3 border-right" style="margin-top: 4rem">
-      <h5 class="mt-2 text-center">User đang Online</h5>
+      <h5 class="mt-2 text-center">Users đang Online</h5>
       <ul id="usersOnline" class="ml-2 list-unstyled d-flex flex-column align-items-start">
       </ul>
     </div>
     <div class="col-9 d-flex flex-column">
     <ul class="list-unstyled d-flex flex-column align-items-start" style="margin-top: 5rem; overflow-y: auto;" id="messages">
     </ul>
-    <form id="chatform" class="input-group mb-3 mt-auto" action="">
+    <form id="chatform" class="input-group mb-3 mt-auto" style="height: 40px" action="">
         <input id="m" type="text" class="form-control" placeholder="Gõ tin nhắn ở đây..."
         data-toggle="popover" data-placement="top" data-content="Tin nhắn của bạn cần có độ dài 2 đến 100 ký tự.">
         <div class="input-group-append">
-          <button id="btn-chat" class="btn btn-outline-secondary" style="padding-bottom: 1.8rem" type="submit">Gửi tin nhắn</button>
+          <button id="btn-chat" class="btn btn-outline-secondary" type="submit">Gửi tin nhắn</button>
         </div>
     </form>
   </div>
@@ -55,10 +55,10 @@
         if(typing == false) {
           typing = true;
           socket.emit('user is typing');
-          timeout = setTimeout(timeoutFunction, 5000);
+          timeout = setTimeout(timeoutFunction, 2000);
         } else {
           clearTimeout(timeout);
-          timeout = setTimeout(timeoutFunction, 5000);
+          timeout = setTimeout(timeoutFunction, 2000);
         }
       }
       
@@ -87,9 +87,8 @@
       $('#messages').append(`<li class=" d-inline-block p-2 my-2 mw-100"><span class="border-bottom d-inline-block">${message.user} </span>: <span class="rounded bg-light p-2">${message.msg}</span></li>`);
     });
     socket.on('user is typing', function(user){
-      console.log(`${user.username} is typing...`);
-      console.log('user id', user.user_id);
-      $('#messages').append(`<li class=" d-inline-block p-2 my-2 mw-100" id="${user.user_id}"><span class="border-bottom d-inline-block">${user.username}</span>: is typing...</li>`);
+      const typingBubble = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+      $('#messages').append(`<li class=" d-inline-block p-2 my-2 mw-100" id="${user.user_id}"><span class="border-bottom d-inline-block">${user.username}</span>: ${typingBubble}`);
       scrollMessagesToBottom(); 
     });
     socket.on('user is not typing', function(user_id){

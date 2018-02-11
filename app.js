@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 /***************Mongodb configuratrion********************/
 var configDB = require('./config/database.js');
 //configuration ===============================================================
-mongoose.connect(configDB.url); // connect to our database
+mongoose.connect(configDB.url).catch(err => console.log(err)); // connect to our database
 
 
 require('./config/passport')(passport); // pass passport for configuration
@@ -98,11 +98,9 @@ const userList = [];
         socket.broadcast.emit('chat message', {user: user.username, msg});
     });
     socket.on('user is typing', () =>{
-        console.log(`${user.username} is typing`);
         socket.broadcast.emit('user is typing', {username: user.username, user_id: user._id});
     });
-    socket.on('user is not typing', () =>{
-        console.log(`${user.username} not typing`);        
+    socket.on('user is not typing', () =>{        
         socket.broadcast.emit('user is not typing', user._id);
     });
 
@@ -110,7 +108,6 @@ const userList = [];
         if (typeof user.username != 'undefined') {
             userList.splice(userList.indexOf(user.username),1);
             io.emit('user disconnected', userList);
-            console.log('disconnect user: ', user.username);
             console.log('disconnect userList: ', userList);     
         }   
     });
